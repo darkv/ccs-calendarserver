@@ -14,3 +14,4 @@ dropin.cache
 /conf/caldavd-dev.plist
 /subprojects/
 /_run/
+.DS_Store
