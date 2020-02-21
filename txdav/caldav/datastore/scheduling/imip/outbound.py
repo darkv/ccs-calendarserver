@@ -109,7 +109,7 @@ plainCancelTemplate = u"""%(subject)s
 %(orgLabel)s: %(plainOrganizer)s
 %(dateLabel)s: %(dateInfo)s %(recurrenceInfo)s
 %(timeLabel)s: %(timeInfo)s %(durationInfo)s
-"""
+""".encode("utf-8")
 
 plainInviteTemplate = u"""%(subject)s
 
@@ -120,7 +120,7 @@ plainInviteTemplate = u"""%(subject)s
 %(descLabel)s: %(description)s
 %(urlLabel)s: %(url)s
 %(attLabel)s: %(plainAttendees)s
-"""
+""".encode("utf-8")
 
 
 htmlCancelTemplate = u"""<html>
