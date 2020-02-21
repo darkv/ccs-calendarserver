@@ -707,7 +707,7 @@ class IMAP4DownloadProtocol(imap4.IMAP4Client):
         # self.log.debug("IMAP in fetchnextmessage")
         if self.messageUIDs:
             nextUID = self.messageUIDs.pop(0)
-            messageListToFetch = imap4.MessageSet(nextUID)
+            messageListToFetch = imap4.MessageSet(int(nextUID))
             self.log.debug(
                 "Downloading message {count} of {total} ({next})",
                 count=self.messageCount - len(self.messageUIDs), total=self.messageCount, next=nextUID
