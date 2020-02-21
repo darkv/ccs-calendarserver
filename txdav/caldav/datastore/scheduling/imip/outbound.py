@@ -240,6 +240,9 @@ class StringFormatTemplateLoader(object):
 
     def load(self):
         html = _fixup(self.fileFactory().read(), self.rendererName)
+        # bad patch by MT: XMLString needs byte string, not Unicode
+        if (isinstance(html, unicode)):
+            html = html.encode("utf-8")
         return XMLString(html).load()
 
 
