@@ -1,37 +1,44 @@
-FROM ubuntu:16.04
+FROM python:2.7.18-slim-buster
 
-LABEL maintainer                    = "giorgio.azzinnaro@gmail.com"                               \
-      io.openshift.tags             = caldavd,ccs                                                 \
-      io.openshift.wants            = memcached,postgres                                          \
-      io.k8s.description            = "Calendar and Contacts Server is a CalDAV implementation"   \
-      io.openshift.expose-services  = 8080:http
+ARG BUILD_DATE
+ARG BUILD_VERSION
 
-# Straight from CCS GitHub install guide
-# except for gettext-base, which we need for "envsubst"
-RUN apt-get update &&       \
-    apt-get -y install      \
-        build-essential     \
-        curl                \
-        gettext-base        \
-        git                 \
-        libffi-dev          \
-        libkrb5-dev         \
-        libldap2-dev        \
-        libreadline6-dev    \
-        libsasl2-dev        \
-        libssl-dev          \
-        python-dev          \
-        python-pip          \
-        python-setuptools   \
-        zlib1g-dev
+LABEL org.opencontainers.image.authors="Johann Häger <johann.haeger@posteo.de>"
+LABEL org.opencontainers.image.created=$BUILD_DATE
+LABEL org.opencontainers.image.description="Calendar and Contacts Server"
+LABEL org.opencontainers.image.documentation="https://github.com/darkv/ccs-calendarserver/blob/main/README.md"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL org.opencontainers.image.source="https://github.com/darkv/ccs-calendarserver"
+LABEL org.opencontainers.image.title="Calendar and Contacts Server"
+LABEL org.opencontainers.image.url="https://github.com/darkv/ccs-calendarserver"
+LABEL org.opencontainers.image.vendor="Johann Häger <johann.haeger@posteo.de>"
+LABEL org.opencontainers.image.version=$BUILD_VERSION
+
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y \
+  build-essential \
+  curl \
+  gettext-base \
+  git \
+  libffi-dev \
+  libkrb5-dev \
+  libldap2-dev \
+  libreadline6-dev \
+  libsasl2-dev \
+  libssl-dev \
+  zlib1g-dev \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/*
 
 # All of the source code is in here
 ADD . /home/ccs
 
 WORKDIR /home/ccs
+RUN pip install -r requirements-default.txt --no-cache-dir
 
-# Dependencies are retrieved and CCS installed in /usr/local
-RUN pip install -r requirements-default.txt 
+# Create cache file for twisted
+WORKDIR $(python -c "import site; print site.getsitepackages()[0]")/twisted/plugins
+RUN python -c "from twisted.plugin import IPlugin, getPlugins; list(getPlugins(IPlugin))"
 
 # Create all runtime directories and ensure right permissions for OC
 RUN mkdir -p        /var/db/caldavd     \
