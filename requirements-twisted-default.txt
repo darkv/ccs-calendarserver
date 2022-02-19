@@ -17,13 +17,13 @@ Twisted==16.6.0
         #pyOpenSSL
     pycrypto==2.6.1
 
-    pyOpenSSL==16.2.0
-        cryptography==1.6
-        	idna
+    pyOpenSSL==18.0.0
+        cryptography==2.3.1
+            #idna
             #pyasn1
             #cffi
-            enum34==1.1.6
-            ipaddress
+            #enum34==1.1.6
+            #ipaddress
             #setuptools
             #six
         six==1.10.0
