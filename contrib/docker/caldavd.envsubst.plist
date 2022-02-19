@@ -87,14 +87,14 @@
 	     following Includes in the list. (Useful for service directory relocation) -->
 	<key>Includes</key>
 	<array>
-		<string>/etc/caldavd/caldavd.ext.plist</string>
-		<string>/etc/caldavd/caldavd.writable.plist</string>
+		<string>caldavd.ext.plist</string>
+		<string>caldavd.writable.plist</string>
 	</array>
 
 	<!-- Which config file calendarserver_config should  write to for changes;
 	     empty string means the main config file -->
 	<key>WritableConfigFile</key>
-	<string>/etc/caldavd/caldavd.writable.plist</string>
+	<string>caldavd.writable.plist</string>
 
 	<!-- Used to connect to an external database if DBType is non-empty -->
 	<key>DatabaseConnection</key>
