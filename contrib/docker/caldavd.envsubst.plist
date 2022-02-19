@@ -116,7 +116,7 @@
 
 		<!-- Password to use -->
 		<key>password</key>
-		<string>$POSTGRES_PASS</string>
+		<string>$POSTGRES_PASSWORD</string>
 		<!-- <string>password</string> -->
 
 		<!-- Set to True to require SSL (pg8000 only). -->

@@ -11,7 +11,7 @@ services:
       POSTGRES_HOST: 'tcp:postgres:5432'
       POSTGRES_DB: ccs
       POSTGRES_USER: caldavd
-      POSTGRES_PASS: test1234
+      POSTGRES_PASSWORD: test1234
       MEMCACHED_HOST: memcached
       MEMCACHED_PORT: 11211
     volumes:

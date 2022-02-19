@@ -63,12 +63,12 @@ VOLUME [ "/etc/caldavd" ]
 EXPOSE 8080
 
 # Some sensible defaults for config
-ENV POSTGRES_HOST   tcp:postgres:5432
-ENV POSTGRES_DB     postgres
-ENV POSTGRES_USER   postgres
-ENV POSTGRES_PASS   password
-ENV MEMCACHED_HOST  memcached
-ENV MEMCACHED_PORT  11211
+ENV POSTGRES_HOST     tcp:postgres:5432
+ENV POSTGRES_DB       postgres
+ENV POSTGRES_USER     postgres
+ENV POSTGRES_PASSWORD password
+ENV MEMCACHED_HOST    memcached
+ENV MEMCACHED_PORT    11211
 
 # To avoid errors with OpenShift, could be any
 USER 1000
