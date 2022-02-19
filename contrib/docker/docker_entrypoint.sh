@@ -6,6 +6,9 @@ set -e
 # Must be done at runtime because of the dynamic UID
 echo "ccs:x:$(id -u):$(id -g):Calendar and Contacts Server:/home/ccs:/bin/bash" >> /etc/passwd
 
+# Remove any PID file that has not been deleted on last shutdown
+rm -f /var/run/caldavd.pid
+
 # Just get our conf file
 CCS_CONF_TEMP_FILE="/home/ccs/contrib/docker/caldavd.envsubst.plist"
 
