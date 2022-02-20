@@ -1,57 +1,71 @@
-version: "3.3"
-
-configs:
-  sql_seed:
-    file: ../../txdav/common/datastore/sql_schema/current.sql
+version: '3'
 
 services:
   ccs:
-    image: giorgioazzinnaro/ccs-calendarserver
+    image: jhaeger/ccs-calendarserver:latest
+    restart: always
     environment:
-      POSTGRES_HOST: 'tcp:postgres:5432'
-      POSTGRES_DB: ccs
-      POSTGRES_USER: caldavd
-      POSTGRES_PASSWORD: test1234
-      MEMCACHED_HOST: memcached
-      MEMCACHED_PORT: 11211
+      - POSTGRES_HOST=tcp:db:5432
+      - POSTGRES_DB=${DB_NAME:-ccs}
+      - POSTGRES_USER=${DB_USER:-caldavd}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?Please provide a database password!}
+      - MEMCACHED_HOST=cache
+      - MEMCACHED_PORT=11211
+      - VIRTUAL_PORT=8008
+      - VIRTUAL_HOST=${CCS_HOSTNAME:?Please provide a hostname for nginx proxy!}
     volumes:
-     - ccsdata:/var/db/caldavd
-     - ccsconf:/etc/caldavd
+     - ccs_data:/var/db/caldavd
+     - ${CCS_CONFIG_PATH:?Please provide the path to the config files!}:/etc/caldavd
     networks:
-      - ccsnet
-    ports:
-      - "8080:8080"
+      - ccs-internal
+      - web-proxy
     depends_on:
-      - postgres
-      - memcached
-    restart: always
+      - db
+      - cache
 
-  postgres:
-    image: postgres
+  db:
+    image: postgres:9-alpine
     restart: always
     environment:
-      POSTGRES_DB: ccs
-      POSTGRES_USER: caldavd
-      POSTGRES_PASSWORD: test1234
+      - POSTGRES_DB=${DB_NAME:-ccs}
+      - POSTGRES_USER=${DB_USER:-caldavd}
+      - POSTGRES_PASSWORD=$DB_PASSWORD
     volumes:
-      - "postgresdata:/var/lib/postgresql/data"
-    configs:
-      - source: sql_seed
-        target: /docker-entrypoint-initdb.d/ccs.sql
+      - ${CCS_DB_INIT_PATH:?Please provide the path to current.sql!}:/docker-entrypoint-initdb.d/ccs.sql
+      - ccs_db:/var/lib/postgresql/data
     networks:
-      - ccsnet
+      - ccs-internal
 
-  memcached:
-    image: memcached:1.5
+  cache:
+    image: memcached:1.6-alpine
+    restart: always
     networks:
-      - ccsnet
+      - ccs-internal
 
-
-volumes:
-  postgresdata:
-  ccsdata:
-  ccsconf:
-
+  backup:
+    image: jhaeger/postgres-backup:1.0.1
+    restart: always
+    environment:
+      - CRON_TIMER=${BACKUP_CRON_TIMER:-0 0 * * *}
+      - TZ=${BACKUP_CRON_TZ:-Etc/UTC}
+      - BACKUP_DB_HOST=db
+      - BACKUP_DB=${DB_NAME:-ccs}
+      - BACKUP_DB_USER=${DB_USER:-caldavd}
+      - BACKUP_DB_PASSWORD=$DB_PASSWORD
+    volumes:
+      - ccs_backups:/root/backups
+    networks:
+      - ccs-internal
+    depends_on:
+      - db
 
 networks:
-  ccsnet:
+  ccs-internal:
+    internal: true
+  web-proxy:
+    external: true
+
+volumes:
+  ccs_db:
+  ccs_data:
+  ccs_backups:
