@@ -61,6 +61,7 @@ VOLUME [ "/etc/caldavd" ]
 
 # This can be edited in docker/caldavd.plist.template > HTTPPort
 EXPOSE 8080
+EXPOSE 8443
 
 # Some sensible defaults for config
 ENV POSTGRES_HOST     tcp:postgres:5432
